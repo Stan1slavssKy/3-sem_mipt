@@ -8,12 +8,15 @@ VALGRIND_FLAGS = --leak-check=full --show-leak-kinds=all
 
 SOURCE = main.c split_func.c
 OBJECT = $(SOURCE:.c=.o)
-OUTPUT = out
+OUTPUT = split_out
 
 default: launch
 
 launch: $(OUTPUT)
 	./$(OUTPUT)
+
+debug: $(OUTPUT)
+	valgrind $(VALGRIND_FLAGS) ./$(OUTPUT)
 
 $(OUTPUT): $(OBJECT)
 	$(CXX) $(WARNINGS) $(DEBUG_MODE) $^ -o $(OUTPUT)

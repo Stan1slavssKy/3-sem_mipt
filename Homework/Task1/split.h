@@ -11,11 +11,12 @@
 //==================================================================================
 
 #define MAX_NMB_WORDS 512
-
+#define MAX_NMB_SYMB 1000
 //==================================================================================
 
 struct string 
 {
+    char*  input_str;
     char** words;
     int    nmb_wrds;
 };
@@ -23,8 +24,9 @@ struct string
 //==================================================================================
 
 void print_reslt (struct string* str);
-void free_memory (struct string* str);
-void split       (struct string* str, char* string, char* space_characters);
+void split       (struct string* str, char* delimiters);
+void get_line    (struct string* str);
+void free_split_str_memory (struct string* str);
 
 //==================================================================================
 

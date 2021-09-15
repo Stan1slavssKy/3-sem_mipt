@@ -5,13 +5,11 @@
 int main ()
 {
     struct string str = {};
+
+    get_line (&str);
+    split    (&str, " \t");
+    free_split_str_memory (&str);
     
-    char input_string[] = "I have beautiful laptop";
-
-    split       (&str, input_string, " \t");
-    print_reslt (&str);
-    free_memory (&str);
-
     return 0;   
 }
 
