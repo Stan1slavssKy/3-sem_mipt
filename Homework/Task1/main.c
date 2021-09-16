@@ -9,7 +9,7 @@ int main ()
     get_line (&str);
     split    (&str, " \t");
     free_split_str_memory (&str);
-    
+
     return 0;   
 }
 

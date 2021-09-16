@@ -39,8 +39,8 @@ void get_line (struct string* str)
     
     if (str -> input_str == NULL)
         fprintf (stderr, "Error in fgets, %d", __LINE__);
-    
-    printf ("AAA {%s}\n", str -> input_str);
+
+    str -> input_str [strlen (str -> input_str) - 1] = '\0';
 }
 
 //==================================================================================
