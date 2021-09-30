@@ -6,9 +6,7 @@
 int main ()
 {
     int N = 0;
-   
-    char test[100000];
-
+    
     printf ("Please enter Number of processes: ");
     scanf ("%d", &N);
 
