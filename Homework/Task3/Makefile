@@ -7,10 +7,10 @@ RELEASE_MODE = -g0 -O3
 VALGRIND_FLAGS = --leak-check=full --show-leak-kinds=all
 
 EXEC_DIR = ./executer
-LIBS_DIR = ./libs
+SPLT_DIR = ./split
 TEXT_DIR = ./text
 
-SOURCE = $(EXEC_DIR)/executer.c $(EXEC_DIR)/main.c $(LIBS_DIR)/split_func.c $(TEXT_DIR)/text.c
+SOURCE = $(EXEC_DIR)/executer.c $(EXEC_DIR)/main.c $(SPLT_DIR)/split_func.c $(TEXT_DIR)/text.c
 OBJECT = $(SOURCE:.c=.o)
 OUTPUT = executer_output
 
@@ -31,7 +31,7 @@ main.o: $(EXEC_DIR)/main.c
 executer.o: $(EXEC_DIR)/executer.c
 	$(CXX) -c $^
 
-split_func.o: $(LIBS_DIR)/split_func.c
+split_func.o: $(SPLT_DIR)/split_func.c
 	$(CXX) -c $^
 
 text.o: $(TEXT_DIR)/text.c

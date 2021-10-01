@@ -10,7 +10,6 @@
 
 struct string 
 {
-    char*  input_str;
     char** words;
     int    number_words;
 };
@@ -18,8 +17,8 @@ struct string
 //==================================================================================
 
 void print_reslt (struct string* str);
-void split       (struct string* str, char* delimiters);
-void get_line    (struct string* str);
+void split       (struct string* str, char* input_string, char* delimiters);
+char* get_line    (struct string* str);
 void free_split_str_memory (struct string* str);
 
 //==================================================================================

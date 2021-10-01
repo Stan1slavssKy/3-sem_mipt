@@ -1,28 +1,38 @@
 #include "executer.h"
-#include "../split/split.h"
+#include <assert.h>
 
 //------------------------------------------------------------------------------------------------
 
-void commands_init (struct text* cmd_text, struct string* str)
+void commands_init (char* file_name)
 {
-    split (str, "\n");
-    
-    
-    free_executer_memory (str);
+    struct text cmd_text = {};
+    struct string str    = {};
+
+    input_inform (file_name, &cmd_text);
+    assert (cmd_text.file_buffer);
+
+    split (&str, cmd_text.file_buffer, "\n");
+    executer (&str);
+
+    free_executer_memory (&str, &cmd_text);
 }
 
 //------------------------------------------------------------------------------------------------
 
-void executer ()
+void executer (struct string* str)
 {
-    commands_init ();
+    return;
 }
 
 //------------------------------------------------------------------------------------------------
 
-void free_executer_memory (struct string* str)
+void free_executer_memory (struct string* str, struct text* cmd_text)
 {
+    assert (str);
+    assert (cmd_text);
+
     free_split_str_memory (str);
+    free_text_memory (cmd_text);
 }
 
 //------------------------------------------------------------------------------------------------

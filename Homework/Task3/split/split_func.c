@@ -10,7 +10,7 @@
 
 //==================================================================================
 
-void split (struct string* str, char* delimiters)
+void split (struct string* str, char* input_string, char* delimiters)
 {
     if (delimiters == NULL)
         fprintf (stderr, "You didn't enter delimiters.\n");
@@ -18,7 +18,7 @@ void split (struct string* str, char* delimiters)
     str -> words = (char**) calloc (MAX_NMB_WORDS, sizeof (char*));
     assert (str -> words);
 
-    char* lexem = strtok (str -> input_str, delimiters);
+    char* lexem = strtok (input_string, delimiters);
     
     while (lexem != NULL)
     {
@@ -33,18 +33,20 @@ void split (struct string* str, char* delimiters)
 
 //==================================================================================
 
-void get_line (struct string* str)
+char* get_line (struct string* str)
 {
-    str -> input_str = (char*) calloc (MAX_NMB_SYMB, sizeof (char));
-    assert (str -> input_str);
+    char* input_string = (char*) calloc (MAX_NMB_SYMB, sizeof (char));
+    assert (input_string);
 
     printf ("Please enter a string.\n");
-    str -> input_str = fgets (str -> input_str, MAX_NMB_SYMB, stdin);
+    input_string = fgets (input_string, MAX_NMB_SYMB, stdin);
     
-    if (str -> input_str == NULL)
+    if (input_string == NULL)
         fprintf (stderr, "Error in fgets, %d", __LINE__);
 
-    str -> input_str [strlen (str -> input_str) - 1] = '\0';
+    input_string [strlen (input_string) - 1] = '\0';
+
+    return input_string;
 }
 
 //==================================================================================
@@ -69,9 +71,6 @@ void free_split_str_memory (struct string* str)
 {
     free (str -> words);
     str -> words = NULL;
-
-    free (str -> input_str);
-    str -> input_str = NULL;
 }
 
 //==================================================================================
