@@ -23,6 +23,7 @@ struct command
 char* console_input (int argc, char* argv[]);
 void make_buffer_from_file (char* file_name, struct command* cmd, struct string* str);
 void parsing_buffer (struct command* cmd, struct string* str);
+void executer  (struct command* cmd, struct string* str);
 void free_memory (struct command* cmd, struct string* str);
 
 //------------------------------------------------------------------------------------------------
@@ -103,7 +104,22 @@ void parsing_buffer (struct command* cmd, struct string* str)
 
 void executer (struct command* cmd, struct string* str)
 {
-    
+    for (int i = 0; i < str -> number_words; i++)
+    {
+        pid_t pid = fork ();
+        if (pid == 0)
+        {
+            execvp (str -> words[i], cmd -> cmd_arr[i].words);
+        }
+        else if (pid > 0)
+        {
+            wait (NULL);
+        }
+        else if (pid == -1)
+        {
+            fprintf (stderr, "fork error %d\n", __LINE__);
+        }
+    }
 }
 
 //------------------------------------------------------------------------------------------------
