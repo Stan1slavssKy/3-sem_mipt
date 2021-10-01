@@ -6,11 +6,9 @@ RELEASE_MODE = -g0 -O3
 
 VALGRIND_FLAGS = --leak-check=full --show-leak-kinds=all
 
-EXEC_DIR = ./executer
-SPLT_DIR = ./split
-TEXT_DIR = ./text
+EXEC_DIR = ./run_processes
 
-SOURCE = $(EXEC_DIR)/executer.c $(EXEC_DIR)/main.c $(SPLT_DIR)/split_func.c $(TEXT_DIR)/text.c
+SOURCE = $(EXEC_DIR)/split.c $(EXEC_DIR)/run_processes.c
 OBJECT = $(SOURCE:.c=.o)
 OUTPUT = executer_output
 
@@ -25,17 +23,11 @@ debug: $(OUTPUT)
 $(OUTPUT): $(OBJECT)
 	$(CXX) $(WARNINGS) $(DEBUG_MODE) $^ -o $(OUTPUT)
 
-main.o: $(EXEC_DIR)/main.c
+run_processes.o: $(EXEC_DIR)/run_processes.c
 	$(CXX) -c $^
 
-executer.o: $(EXEC_DIR)/executer.c
+split.o: $(EXEC_DIR)/split.c
 	$(CXX) -c $^
 
-split_func.o: $(SPLT_DIR)/split_func.c
-	$(CXX) -c $^
-
-text.o: $(TEXT_DIR)/text.c
-	$(CXX) -c $^
-	
 clean:
 	rm -f *.o *.a $(OBJECT) $(OUTPUT)
