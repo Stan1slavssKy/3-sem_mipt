@@ -90,10 +90,10 @@ void input_inform (char* file_name, struct text* text_info)
 
     int  size_of_file = file_size (file_name);
     char* file_buffer = read_file (file_name, size_of_file);
-    int   number_line = counter_line (file_buffer);
+    //int   number_line = counter_line (file_buffer);
 
     text_info -> size_of_file = size_of_file;
-    text_info -> number_line  = number_line;
+    //text_info -> number_line  = number_line;
     text_info -> file_buffer  = file_buffer;
 }
 
