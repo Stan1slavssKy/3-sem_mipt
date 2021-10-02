@@ -14,7 +14,7 @@
 struct command
 {
     char*  string;
-    int    working_time;
+    int*   working_time;
     struct string* cmd_arr;
 };
 
@@ -33,8 +33,8 @@ int main (int argc, char** argv)
     char* file_name = console_input (argc, argv);
     assert (file_name);
 
-    struct command cmd = {};
-    struct string  str = {};
+    struct command cmd = {0};
+    struct string  str = {0};
 
     make_buffer_from_file (file_name, &cmd, &str);
     parsing_buffer (&cmd, &str);
@@ -94,9 +94,22 @@ void parsing_buffer (struct command* cmd, struct string* str)
 
     cmd -> cmd_arr = cmd_arr;
 
+    cmd -> working_time = (int*) calloc (str -> number_words, sizeof (int));
+    assert (cmd -> working_time);
+
     for (int i = 0; i < str -> number_words; i++)
     {
         split (cmd_arr + i, str -> words[i], " ");
+        
+        int time = atoi(str -> words[i]); 
+        if (time != 0)
+        {
+            cmd -> working_time[i] = time;
+        }
+        else
+        {
+            cmd -> working_time[i] = -1;  
+        }
     }
 }
 
@@ -109,7 +122,16 @@ void executer (struct command* cmd, struct string* str)
         pid_t pid = fork ();
         if (pid == 0)
         {
-            execvp (str -> words[i], cmd -> cmd_arr[i].words);
+            int time = cmd -> working_time[i];
+            int if_timer = 0;
+            if (time > 0)
+            {
+                printf ("%d\n", time);
+                sleep (time);
+                if_timer++;
+            }
+            
+            execvp (cmd -> cmd_arr[i].words[if_timer], cmd -> cmd_arr[i].words + if_timer);
         }
         else if (pid > 0)
         {
