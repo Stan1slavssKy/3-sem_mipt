@@ -14,7 +14,7 @@ int main ()
 {
     (void) umask (0);
 
-    if(mknod("fir_fifo", S_IFIFO | S_IRUSR | S_IWUSR, 0) == - 1)
+    if(mknod("fir_fifo", S_IFIFO | 0666, 0) == - 1)
     {
         if (errno != EEXIST)
         {
@@ -22,7 +22,7 @@ int main ()
         }
     }
 
-    if(mknod("sec_fifo", S_IFIFO | S_IRUSR | S_IWUSR, 0) == - 1)
+    if(mknod("sec_fifo", S_IFIFO | 0666, 0) == - 1)
     {
         if (errno != EEXIST)
         {
@@ -38,25 +38,30 @@ void client_2 ()
     pid_t pid = fork ();
     if (pid == 0)
     {
-        int fd = open ("sec_fifo", O_RDONLY);
-        
+        int fd3 = open ("sec_fifo", O_WRONLY);
         char buffer[1000] = {};
-        fgets (buffer, 1000, stdin);
-        read (fd, buffer, 1000);
         
-        printf ("%s\n", buffer);
+        while (1)
+        {
+            fgets (buffer, 1000, stdin);
+            write (fd3, buffer, 1000);
+        }
 
-        close (fd);
+        close (fd3);
     }
     else if (pid > 0)
     {
-        int fd = open ("fir_fifo", O_RDONLY);
-        
+        int fd4 = open ("fir_fifo", O_RDONLY);
+
         char buffer[1000] = {};
-        fgets (buffer, 1000, stdin);
-        write (fd, buffer, 1000);
-        
-        close (fd);
+
+        while (1)
+        {
+            read (fd4, buffer, 1000);
+            printf ("%s\n", buffer);
+        }
+
+        close (fd4);
     }
     else if (pid == -1) 
     {
