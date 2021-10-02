@@ -8,7 +8,7 @@
 #include <errno.h>
 #include <stdlib.h>
 
-void client_2 ();
+void client (const char* s1, const char* s2);
 
 int main ()
 {
@@ -30,40 +30,48 @@ int main ()
         }
     }
 
-    client_2 ();
+    int number_of_client = 0;
+
+    printf ("Enter number of client: ");
+    scanf ("%d", &number_of_client);
+    printf ("\n");
+
+    if (number_of_client == 1)
+        client ("fir_fifo", "sec_fifo");
+    else if (number_of_client == 2)
+        client ("sec_fifo", "fir_fifo");
 }
 
-void client_2 ()
+void client (const char* s1, const char* s2)
 {
     pid_t pid = fork ();
     if (pid == 0)
     {
-        int fd3 = open ("sec_fifo", O_WRONLY);
-        char buffer[1000] = {};
+        int fd1 = open (s1, O_WRONLY);
         
+        char buffer[1000] = {};
         while (1)
         {
             fgets (buffer, 1000, stdin);
-            write (fd3, buffer, 1000);
+            write (fd1, buffer, 1000);
         }
-
-        close (fd3);
+        
+        close (fd1);
     }
     else if (pid > 0)
     {
-        int fd4 = open ("fir_fifo", O_RDONLY);
+        int fd2 = open (s2, O_RDONLY);
 
         char buffer[1000] = {};
-
         while (1)
         {
-            read (fd4, buffer, 1000);
+            read (fd2, buffer, 1000);
             printf ("%s\n", buffer);
         }
 
-        close (fd4);
+        close (fd2);
     }
-    else if (pid == -1) 
+    else if (pid == -1)
     {
         fprintf (stderr, "fork error %d", __LINE__);
         exit (0);
