@@ -26,16 +26,14 @@ struct command
 
 //------------------------------------------------------------------------------------------------
 
-/*
-Обращайте внимание на названия ф-й и переменных:
-в названии ф-й должен присутствовать глагол: executer -> execute.
-существительные нужно использовать для названий переменных и структур
-*/
 char* console_input (int argc, char* argv[]);
-void make_buffer_from_file (char* file_name, struct command* cmd, struct string* str);
-void parsing_buffer (struct command* cmd, struct string* str);
-void executer  (struct command* cmd, struct string* str);
-void free_memory (struct command* cmd, struct string* str);
+void  make_buffer_from_file (char* file_name, struct command* cmd, struct string* str);
+void  parsing_buffer (struct command* cmd, struct string* str);
+void  execute        (struct command* cmd, int number_of_commands);
+void  free_memory    (struct command* cmd, struct string* str);
+void  sorting_working_time (struct command* cmd, int number_of_commands);
+void  swap_times (int* fir_time, int* sec_time);
+void  swap_struct_str (struct string* fir_str, struct string* sec_str);
 
 //------------------------------------------------------------------------------------------------
 
@@ -49,7 +47,9 @@ int main (int argc, char** argv)
 
     make_buffer_from_file (file_name, &cmd, &str);
     parsing_buffer (&cmd, &str);
-    executer (&cmd, &str);
+    sorting_working_time (&cmd, str.number_words);
+
+    execute (&cmd, str.number_words);
     
     free_memory (&cmd, &str);
 
@@ -112,25 +112,17 @@ void parsing_buffer (struct command* cmd, struct string* str)
     {
         split (cmd_arr + i, str -> words[i], " ");
         
-        int time = atoi(str -> words[i]);
-        // Можно написать в одну строку: cmd -> working_time[i] = time ? time : -1;
-        if (time != 0)
-        {
-            cmd -> working_time[i] = time;
-        }
-        else
-        {
-            cmd -> working_time[i] = -1;  
-        }
+        int time = atoi (str -> words[i]);
+
+        cmd -> working_time[i] = time ? time : -1;
     }
 }
 
 //------------------------------------------------------------------------------------------------
 
-// TODO: не нужно передавать в ф-ю то, что в ней не используется: вторым параметром можно передать просто int number_of_commands
-void executer (struct command* cmd, struct string* str)
+void execute (struct command* cmd, int number_of_commands)
 {
-    for (int i = 0; i < str -> number_words; i++)
+    for (int i = 0; i < number_of_commands; i++)
     {
         int time = cmd -> working_time[i];
         int if_timer = 0;
@@ -173,6 +165,43 @@ void executer (struct command* cmd, struct string* str)
 
 //------------------------------------------------------------------------------------------------
 
+void sorting_working_time (struct command* cmd, int number_of_commands)
+{
+    int* time_arr = cmd -> working_time;
+
+    for (int idx_1 = 0; idx_1 < number_of_commands; idx_1++)
+    {
+        for (int idx_2 = 0; idx_2 < number_of_commands - idx_1; idx_2++)
+        {
+            if (time_arr[idx_2] > time_arr[idx_2 + 1])
+            {
+                swap_times (&time_arr[idx_2], &time_arr[idx_2 + 1]);
+                swap_struct_str (&cmd -> cmd_arr[idx_2], &cmd -> cmd_arr[idx_2]);
+            }
+        }   
+    }    
+}
+
+//------------------------------------------------------------------------------------------------
+
+void swap_times (int* fir_time, int* sec_time)
+{
+    int temp = *fir_time;
+    *fir_time = *sec_time;
+    *sec_time = temp;
+}
+
+//------------------------------------------------------------------------------------------------
+
+void swap_struct_str (struct string* fir_str, struct string* sec_str)
+{
+    struct string temp = *fir_str;
+    *fir_str = *sec_str;
+    *sec_str = temp;  
+}
+
+//------------------------------------------------------------------------------------------------
+
 void free_memory (struct command* cmd, struct string* str)
 {   
     for (int i = 0; i < str -> number_words; i++)
@@ -185,4 +214,4 @@ void free_memory (struct command* cmd, struct string* str)
     free (cmd -> string);
 }
 
-//------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------ 
