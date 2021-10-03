@@ -1,2 +1,3 @@
 ls -al
-1 echo Hello, world!
+echo Hello, world!
+./a.out

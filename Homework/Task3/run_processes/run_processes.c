@@ -8,6 +8,12 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include "split.h"
+#include <signal.h>
+#include <time.h>
+
+//------------------------------------------------------------------------------------------------
+
+#define TIMEOUT 5
 
 //------------------------------------------------------------------------------------------------
 
@@ -119,11 +125,12 @@ void executer (struct command* cmd, struct string* str)
 {
     for (int i = 0; i < str -> number_words; i++)
     {
+        int time = cmd -> working_time[i];
+        int if_timer = 0;
+
         pid_t pid = fork ();
         if (pid == 0)
         {
-            int time = cmd -> working_time[i];
-            int if_timer = 0;
             if (time > 0)
             {
                 printf ("%d\n", time);
@@ -136,6 +143,16 @@ void executer (struct command* cmd, struct string* str)
         else if (pid > 0)
         {
             wait (NULL);
+            
+            clock_t clck = clock ();
+            if (clck == -1) fprintf (stderr, "error clock, %d\n", clck);
+            
+            clock_t waiting_time = clck / CLOCKS_PER_SEC;
+            
+            if (waiting_time >= TIMEOUT)
+            {
+                kill (pid, SIGKILL);
+            }
         }
         else if (pid == -1)
         {
