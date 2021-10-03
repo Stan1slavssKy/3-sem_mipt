@@ -171,12 +171,12 @@ void sorting_working_time (struct command* cmd, int number_of_commands)
 
     for (int idx_1 = 0; idx_1 < number_of_commands; idx_1++)
     {
-        for (int idx_2 = 0; idx_2 < number_of_commands - idx_1; idx_2++)
+        for (int idx_2 = 0; idx_2 < number_of_commands - idx_1 - 1; idx_2++)
         {
             if (time_arr[idx_2] > time_arr[idx_2 + 1])
             {
                 swap_times (&time_arr[idx_2], &time_arr[idx_2 + 1]);
-                swap_struct_str (&cmd -> cmd_arr[idx_2], &cmd -> cmd_arr[idx_2]);
+                swap_struct_str (&cmd -> cmd_arr[idx_2], &cmd -> cmd_arr[idx_2 + 1]);
             }
         }   
     }    
