@@ -20,6 +20,11 @@ struct command
 
 //------------------------------------------------------------------------------------------------
 
+/*
+Обращайте внимание на названия ф-й и переменных:
+в названии ф-й должен присутствовать глагол: executer -> execute.
+существительные нужно использовать для названий переменных и структур
+*/
 char* console_input (int argc, char* argv[]);
 void make_buffer_from_file (char* file_name, struct command* cmd, struct string* str);
 void parsing_buffer (struct command* cmd, struct string* str);
@@ -101,7 +106,8 @@ void parsing_buffer (struct command* cmd, struct string* str)
     {
         split (cmd_arr + i, str -> words[i], " ");
         
-        int time = atoi(str -> words[i]); 
+        int time = atoi(str -> words[i]);
+        // Можно написать в одну строку: cmd -> working_time[i] = time ? time : -1;
         if (time != 0)
         {
             cmd -> working_time[i] = time;
@@ -115,6 +121,7 @@ void parsing_buffer (struct command* cmd, struct string* str)
 
 //------------------------------------------------------------------------------------------------
 
+// TODO: не нужно передавать в ф-ю то, что в ней не используется: вторым параметром можно передать просто int number_of_commands
 void executer (struct command* cmd, struct string* str)
 {
     for (int i = 0; i < str -> number_words; i++)
@@ -133,6 +140,7 @@ void executer (struct command* cmd, struct string* str)
             
             execvp (cmd -> cmd_arr[i].words[if_timer], cmd -> cmd_arr[i].words + if_timer);
         }
+        // TODO: у вас не запустится 2я команда, пока не завершится 1я. Если в первой команде время запуска указано позже, чем у второй, вторая в итоге будет запущена позже срока
         else if (pid > 0)
         {
             wait (NULL);
@@ -143,6 +151,8 @@ void executer (struct command* cmd, struct string* str)
         }
     }
 }
+// TODO: доделайте ещё проверку, что команда не должна работать дольше, чем заранее оговоренное время, например, 5 сек. Для проверки можете сами написать программу с одной строчкой
+// sleep(10); в теле main и убедиться, что соответствующий процесс будет "убит" через 5 сек.
 
 //------------------------------------------------------------------------------------------------
 
