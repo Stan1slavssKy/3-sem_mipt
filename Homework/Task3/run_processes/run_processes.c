@@ -34,7 +34,7 @@ void  free_memory    (struct command* cmd, struct string* str);
 void  sorting_working_time (struct command* cmd, int number_of_commands);
 void  swap_times (int* fir_time, int* sec_time);
 void  swap_struct_str (struct string* fir_str, struct string* sec_str);
-void make_relative_execution_time (int* time_arr, int number_of_commands);
+void  make_relative_execution_time (int* time_arr, int number_of_commands);
 
 //------------------------------------------------------------------------------------------------
 
@@ -141,20 +141,9 @@ void execute (struct command* cmd, int number_of_commands)
             
             execvp (cmd -> cmd_arr[i].words[if_timer], cmd -> cmd_arr[i].words + if_timer);
         }
-        // TODO: у вас не запустится 2я команда, пока не завершится 1я. Если в первой команде время запуска указано позже, чем у второй, вторая в итоге будет запущена позже срока
         else if (pid > 0)
         {
             wait (NULL);
-            
-            clock_t clck = clock ();
-            if (clck == -1) fprintf (stderr, "error clock, %d\n", clck);
-            
-            clock_t waiting_time = clck / CLOCKS_PER_SEC;
-            
-            if (waiting_time >= TIMEOUT)
-            {
-                kill (pid, SIGKILL);
-            }
         }
         else if (pid == -1)
         {
