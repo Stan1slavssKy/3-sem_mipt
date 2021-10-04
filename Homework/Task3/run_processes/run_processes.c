@@ -34,6 +34,7 @@ void  free_memory    (struct command* cmd, struct string* str);
 void  sorting_working_time (struct command* cmd, int number_of_commands);
 void  swap_times (int* fir_time, int* sec_time);
 void  swap_struct_str (struct string* fir_str, struct string* sec_str);
+void make_relative_execution_time (int* time_arr, int number_of_commands);
 
 //------------------------------------------------------------------------------------------------
 
@@ -48,7 +49,8 @@ int main (int argc, char** argv)
     make_buffer_from_file (file_name, &cmd, &str);
     parsing_buffer (&cmd, &str);
     sorting_working_time (&cmd, str.number_words);
-
+    make_relative_execution_time (cmd.working_time, str.number_words);
+    
     execute (&cmd, str.number_words);
     
     free_memory (&cmd, &str);
@@ -130,7 +132,7 @@ void execute (struct command* cmd, int number_of_commands)
         pid_t pid = fork ();
         if (pid == 0)
         {
-            if (time > 0)
+            if (time >= 0)
             {
                 printf ("%d\n", time);
                 sleep (time);
@@ -198,6 +200,36 @@ void swap_struct_str (struct string* fir_str, struct string* sec_str)
     struct string temp = *fir_str;
     *fir_str = *sec_str;
     *sec_str = temp;  
+}
+
+//------------------------------------------------------------------------------------------------
+
+void make_relative_execution_time (int* time_arr, int number_of_commands)
+{
+    assert (time_arr);
+
+    for (int i = 0; i < number_of_commands - 1; i++)
+    {
+        if (time_arr[i] == time_arr[i + 1])
+        {
+            time_arr[i + 1] = time_arr[i + 1] - time_arr[i];
+            i++;
+
+            while (time_arr[i] == time_arr[i + 1])
+            {
+                time_arr[i + 1] = 0;
+                i++;
+            }
+        }
+        else if (time_arr[i] < time_arr[i + 1])
+        {
+            time_arr[i + 1] = time_arr[i + 1] - time_arr[i];
+        }
+        else
+        {
+            fprintf (stderr, "error %d\n", __LINE__);
+        }
+    }
 }
 
 //------------------------------------------------------------------------------------------------
