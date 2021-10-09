@@ -26,7 +26,7 @@ int buble_sort (int* a, int n, Compare comp)
     {
         for (int j = i + 1; j < n; j++)
         {
-            if (comp (a[j], a[i]))
+            if (comp (a[i], a[j]))
             {
                 swap (&a[i], &a[j]);
             }
