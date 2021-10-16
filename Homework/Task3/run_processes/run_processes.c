@@ -4,12 +4,14 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <string.h>
 
 #include <unistd.h>
 #include <sys/wait.h>
-#include "split.h"
 #include <signal.h>
 #include <time.h>
+
+#include "split.h"
 
 //------------------------------------------------------------------------------------------------
 
@@ -34,7 +36,6 @@ void  free_memory    (struct command* cmd, struct string* str);
 void  sorting_working_time (struct command* cmd, int number_of_commands);
 void  swap_times (int* fir_time, int* sec_time);
 void  swap_struct_str (struct string* fir_str, struct string* sec_str);
-void  make_relative_execution_time (int* time_arr, int number_of_commands);
 
 //------------------------------------------------------------------------------------------------
 
@@ -49,7 +50,7 @@ int main (int argc, char** argv)
     make_buffer_from_file (file_name, &cmd, &str);
     parsing_buffer (&cmd, &str);
     sorting_working_time (&cmd, str.number_words);
-    make_relative_execution_time (cmd.working_time, str.number_words);
+    //make_relative_execution_time (cmd.working_time, str.number_words);
     
     execute (&cmd, str.number_words);
     
@@ -127,32 +128,28 @@ void execute (struct command* cmd, int number_of_commands)
     for (int i = 0; i < number_of_commands; i++)
     {
         int time = cmd -> working_time[i];
-        int if_timer = 0;
 
-        pid_t pid = fork ();
-        if (pid == 0)
+        pid_t pid1 = fork ();
+        if (pid1 == 0)
         {
-            if (time >= 0)
+            pid_t pid2 = fork ();
+            if (pid2 == 0)
             {
-                printf ("%d\n", time);
-                sleep (time);
-                if_timer++;
+                sleep (time + TIMEOUT);
+                kill (getppid(), SIGINT);
+                exit (0);
             }
-            
-            execvp (cmd -> cmd_arr[i].words[if_timer], cmd -> cmd_arr[i].words + if_timer);
-        }
-        else if (pid > 0)
-        {
-            wait (NULL);
-        }
-        else if (pid == -1)
-        {
-            fprintf (stderr, "fork error %d\n", __LINE__);
+            else
+            {
+                sleep (time);
+                execvp (cmd -> cmd_arr[i].words[1], cmd -> cmd_arr[i].words + 1);
+                exit (-1);
+            }
+
         }
     }
 }
-// TODO: доделайте ещё проверку, что команда не должна работать дольше, чем заранее оговоренное время, например, 5 сек. Для проверки можете сами написать программу с одной строчкой
-// sleep(10); в теле main и убедиться, что соответствующий процесс будет "убит" через 5 сек.
+//осталось сделать wait и все
 
 //------------------------------------------------------------------------------------------------
 
@@ -189,36 +186,6 @@ void swap_struct_str (struct string* fir_str, struct string* sec_str)
     struct string temp = *fir_str;
     *fir_str = *sec_str;
     *sec_str = temp;  
-}
-
-//------------------------------------------------------------------------------------------------
-
-void make_relative_execution_time (int* time_arr, int number_of_commands)
-{
-    assert (time_arr);
-
-    for (int i = 0; i < number_of_commands - 1; i++)
-    {
-        if (time_arr[i] == time_arr[i + 1])
-        {
-            time_arr[i + 1] = time_arr[i + 1] - time_arr[i];
-            i++;
-
-            while (time_arr[i] == time_arr[i + 1])
-            {
-                time_arr[i + 1] = 0;
-                i++;
-            }
-        }
-        else if (time_arr[i] < time_arr[i + 1])
-        {
-            time_arr[i + 1] = time_arr[i + 1] - time_arr[i];
-        }
-        else
-        {
-            fprintf (stderr, "error %d\n", __LINE__);
-        }
-    }
 }
 
 //------------------------------------------------------------------------------------------------
