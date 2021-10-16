@@ -114,10 +114,7 @@ void parsing_buffer (struct command* cmd, struct string* str)
     for (int i = 0; i < str -> number_words; i++)
     {
         split (cmd_arr + i, str -> words[i], " ");
-        
-        int time = atoi (str -> words[i]);
-
-        cmd -> working_time[i] = time ? time : -1;
+        cmd -> working_time[i] = atoi (str -> words[i]);
     }
 }
 
@@ -125,6 +122,9 @@ void parsing_buffer (struct command* cmd, struct string* str)
 
 void execute (struct command* cmd, int number_of_commands)
 {
+    pid_t* pid_arr = (pid_t*) calloc (number_of_commands, sizeof (pid_t));
+    assert (pid_arr);
+
     for (int i = 0; i < number_of_commands; i++)
     {
         int time = cmd -> working_time[i];
@@ -142,14 +142,28 @@ void execute (struct command* cmd, int number_of_commands)
             else
             {
                 sleep (time);
-                execvp (cmd -> cmd_arr[i].words[1], cmd -> cmd_arr[i].words + 1);
+                if (time == 0)
+                {
+                    execvp (cmd -> cmd_arr[i].words[0], cmd -> cmd_arr[i].words);
+                }
+                else 
+                {
+                    execvp (cmd -> cmd_arr[i].words[1], cmd -> cmd_arr[i].words + 1);
+                }
                 exit (-1);
             }
-
         }
+        pid_arr[i] = pid1;
     }
+
+    for (size_t i = 0; i < number_of_commands; i++)
+    {
+        int status = 0;
+        waitpid (pid_arr[i], &status, WUNTRACED);
+    }
+
+    free (pid_arr);
 }
-//осталось сделать wait и все
 
 //------------------------------------------------------------------------------------------------
 

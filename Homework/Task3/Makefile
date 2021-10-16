@@ -1,3 +1,5 @@
+#==========================================================================================
+
 CXX       = gcc
 WARNINGS  = -Wall -Wextra 
 
@@ -14,20 +16,18 @@ OUTPUT = executer_output
 
 default: launch
 
-launch: $(OUTPUT)
-	./$(OUTPUT) "input_commands"
-
 debug: $(OUTPUT)
 	valgrind $(VALGRIND_FLAGS) ./$(OUTPUT) "input_commands"
 
+launch: $(OUTPUT)
+	./$(OUTPUT) "input_commands"
+
 $(OUTPUT): $(OBJECT)
-	$(CXX) $(WARNINGS) $(DEBUG_MODE) $^ -o $(OUTPUT)
+	$(CXX) $(DEBUG_MODE) $(OBJECT) -o $@
 
-run_processes.o: $(EXEC_DIR)/run_processes.c
-	$(CXX) -c $^
-
-split.o: $(EXEC_DIR)/split.c
-	$(CXX) -c $^
+.c.o: $(CXX) -c $(WARNINGS) $< -o $@
 
 clean:
 	rm -f *.o *.a $(OBJECT) $(OUTPUT)
+
+#==========================================================================================

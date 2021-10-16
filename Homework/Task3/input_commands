@@ -1,2 +1,2 @@
-10 echo Hello, world!
-5 ls 
+1 echo Hello, world!
+1 ls -al
