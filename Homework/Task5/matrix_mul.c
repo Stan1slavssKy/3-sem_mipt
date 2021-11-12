@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <pthread.h>
+#include <time.h>
 
 //================================================================
 
@@ -30,10 +31,11 @@ struct matrix matrix_mul(struct matrix* fir_matrix, struct matrix* sec_matrix);
 
 int main()
 {
-    size_t matrix_size = 2;
-
+    size_t matrix_size = 700;
+    
     create_multipliable_matrices(matrix_size);
-
+    
+    printf ("gg\n");
     return 0;
 }
 
@@ -47,14 +49,10 @@ void create_multipliable_matrices(size_t matrix_size)
     fir_matrix.size = matrix_size;
     sec_matrix.size = matrix_size;
 
-
     input_matrix_data(&fir_matrix);
     input_matrix_data(&sec_matrix);
 
-    print_matrix(&fir_matrix);
-    print_matrix(&sec_matrix);
-
-    matrix_mul(&fir_matrix, &sec_matrix);
+    struct matrix result = matrix_mul(&fir_matrix, &sec_matrix);
 
     free_matrix_memory(&fir_matrix);
     free_matrix_memory(&sec_matrix);
@@ -78,8 +76,7 @@ void input_matrix_data(struct matrix* matrix)
 
     for (size_t i = 0; i < size * size; i++)
     {
-        matrix->data[i] =1;
-        printf ("%lf\n", matrix->data[i]);
+        matrix->data[i] = RAND_INT_TO_DOUBLE * (double)(rand() % 10);
     }
 }
 
@@ -94,7 +91,7 @@ void print_matrix(struct matrix* matrix)
     {
         for (size_t i = 0; i < size; i++)
         {
-            printf("%d ", matrix->data[line * size + i]);
+            printf("%lf ", matrix->data[line * size + i]);
         }
         printf("\n");
     }
@@ -114,6 +111,8 @@ struct matrix matrix_mul(struct matrix* fir_matrix, struct matrix* sec_matrix)
 
     result_matrix.size = size;
 
+    clock_t start_mul = clock();
+
     for (size_t line = 0; line < size; line++)
     {
         for (size_t column = 0; column <  size; column++)
@@ -129,7 +128,8 @@ struct matrix matrix_mul(struct matrix* fir_matrix, struct matrix* sec_matrix)
         }
     }
 
-    print_matrix(&result_matrix);
+    clock_t end_mul = clock();
+    printf ("matrix mul = %lf\n", (double)(end_mul - start_mul) / CLOCKS_PER_SEC);
 
     return result_matrix;
 }
