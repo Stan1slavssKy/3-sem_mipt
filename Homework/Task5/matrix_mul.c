@@ -11,7 +11,7 @@
 #include <pthread.h>
 #include <time.h>
 
-//================================================================
+//==================================================================================================================
 
 struct matrix
 {
@@ -19,29 +19,44 @@ struct matrix
     size_t size;
 };
 
-const double RAND_INT_TO_DOUBLE = 0.7;
+enum choice_mul
+{
+    WITH_THREADS    = 1,
+    WITHOUT_THREADS = 0
+};
 
-void create_multipliable_matrices(size_t matrix_size);
+const double RAND_INT_TO_DOUBLE = 0.7;
+const int    THREADS_NUMBER     = 100;
+
+void create_multipliable_matrices(size_t matrix_size, int choice_mul);
 void input_matrix_data(struct matrix* matrix);
 void print_matrix(struct matrix* matrix);
 void free_matrix_memory(struct matrix* matrix);
-struct matrix matrix_mul(struct matrix* fir_matrix, struct matrix* sec_matrix);
+void matrix_mul(struct matrix* fir_matrix, struct matrix* sec_matrix);
+struct matrix thread_matrix_mul(struct matrix* fir_matrix, struct matrix* sec_matrix);
 
-//================================================================
+//==================================================================================================================
 
 int main()
 {
-    size_t matrix_size = 700;
+    size_t matrix_size = 500;
     
-    create_multipliable_matrices(matrix_size);
-    
-    printf ("gg\n");
+    printf ("Let's measure the multiplication time of a square matrix %d x %d\n", matrix_size, matrix_size);
+    printf ("Without threads: ");
+
+    create_multipliable_matrices(matrix_size, WITHOUT_THREADS);
+
+    printf ("Using   threads: ");
+    printf ("\n");
+
+    create_multipliable_matrices(matrix_size, WITH_THREADS);
+
     return 0;
 }
 
-//================================================================
+//==================================================================================================================
 
-void create_multipliable_matrices(size_t matrix_size)
+void create_multipliable_matrices(size_t matrix_size, int choice_mul)
 {
     struct matrix fir_matrix = {};
     struct matrix sec_matrix = {};
@@ -52,7 +67,14 @@ void create_multipliable_matrices(size_t matrix_size)
     input_matrix_data(&fir_matrix);
     input_matrix_data(&sec_matrix);
 
-    struct matrix result = matrix_mul(&fir_matrix, &sec_matrix);
+    if (choice_mul)
+    {
+        thread_matrix_mul(&fir_matrix, &sec_matrix);
+    }
+    else
+    {
+        matrix_mul(&fir_matrix, &sec_matrix);
+    }
 
     free_matrix_memory(&fir_matrix);
     free_matrix_memory(&sec_matrix);
@@ -98,7 +120,7 @@ void print_matrix(struct matrix* matrix)
     printf("\n");
 }
 
-struct matrix matrix_mul(struct matrix* fir_matrix, struct matrix* sec_matrix)
+void matrix_mul(struct matrix* fir_matrix, struct matrix* sec_matrix)
 {
     assert (fir_matrix);
     assert (sec_matrix);
@@ -129,9 +151,9 @@ struct matrix matrix_mul(struct matrix* fir_matrix, struct matrix* sec_matrix)
     }
 
     clock_t end_mul = clock();
-    printf ("matrix mul = %lf\n", (double)(end_mul - start_mul) / CLOCKS_PER_SEC);
+    printf ("%lf\n", (double)(end_mul - start_mul) / CLOCKS_PER_SEC);
 
-    return result_matrix;
+    free_matrix_memory(&result_matrix);
 }
 
 void free_matrix_memory(struct matrix* matrix)
@@ -143,4 +165,38 @@ void free_matrix_memory(struct matrix* matrix)
     matrix->data = NULL;
 }
 
-//================================================================
+//==================================================================================================================
+/*
+struct matrix thread_matrix_mul(struct matrix* fir_matrix, struct matrix* sec_matrix)
+{
+    assert(fir_matrix);
+    assert(sec_matrix);
+
+    int N = fir_matrix->size;
+    
+    struct matrix result_matrix = {};
+    size_t thread_counter = 0;
+
+    for(int i = 0; i < N; i++)
+    {
+        pthread_t thid = 0;
+        pthread_create(&thid, (pthread_attr_t*) NULL, thread_mul, &result_matrix);
+        
+        thread_counter++;
+    }
+
+    return result_matrix;
+}
+
+//==================================================================================================================
+
+void thread_mul(struct matrix* result_matrix)
+{
+    assert(result_matrix);
+
+    for()
+    {
+
+    }
+}
+*/

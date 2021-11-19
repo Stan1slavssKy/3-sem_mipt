@@ -20,7 +20,7 @@ valgrind: $(OUTPUT)
 	valgrind ./$(OUTPUT)
 	
 $(OUTPUT): $(OBJECT)
-	$(CXX) $(WARNINGS) $(DEBUG_MODE) $^ -o $(OUTPUT)
+	$(CXX) $(WARNINGS) $(DEBUG_MODE) $^ -o $(OUTPUT) -lpthread
  
 matrix_mul.c.o: matrix_mul.c
 	$(CXX) -c $^
