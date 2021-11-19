@@ -17,7 +17,6 @@
 
 //========================================================================================================
 
-
 const size_t MAX_FOUND_PATH_NUMBER = 100;
 const size_t MAX_FOUND_PATH_LENGTH = 1000; 
 
@@ -42,12 +41,15 @@ int main()
         for(int idx = 0; idx < found_files_counter; idx++)
         {
             printf("%s\n", found_path[idx]);
+            free(found_path[idx]);
         }
     }
     else
     {
         printf("No file named \"%s\" found.\n", file_name);
     }
+
+    free(found_path);
 
     return 0;
 }
@@ -93,6 +95,10 @@ void find_file(char* file_name, char* cur_dir, int depth, int* found_files_count
                 {
                     found_path[*found_files_counter] = new_dir;
                     (*found_files_counter)++;
+                }
+                else
+                {
+                    free(new_dir);  
                 }
             }
         }
